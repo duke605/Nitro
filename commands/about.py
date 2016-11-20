@@ -19,7 +19,7 @@ class About:
         await self.bot.send_typing(ctx.message.channel)
 
         e = discord.Embed(title='Official Development Server Invite', url='https://discord.gg/q3UNHq8'
-                          , description='[]()')
+                          , description='https://github.com/duke605/Nitro')
         owner = await self.bot.get_user_info('136856172203474944')
 
         # Preparing field data
@@ -38,7 +38,6 @@ class About:
         e.add_field(name='Memory Usage', value='{:,} MiB\n{:,}%'.format(mem_usage, mem_per))
         e.add_field(name='Members', value='{:,} Total\n{:,} Registered\n{:,} Unregistered'
                     .format(total_users, reg_users, unreg_users))
-        e.add_field(name='Github', value='https://github.com/duke605/Nitro')
 
         e.set_author(name=str(owner), icon_url=owner.avatar_url)
         e.set_footer(text='Made with discord.py', icon_url='http://i.imgur.com/5BFecvA.png')
