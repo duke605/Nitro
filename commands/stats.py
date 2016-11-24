@@ -93,7 +93,8 @@ class Stats:
             with BytesIO() as b:
                 i.save(b, 'PNG')
                 b.seek(0)
-                await self.bot.send_file(ctx.message.channel, b, filename='stats.png')
+                await self.bot.send_file(ctx.message.channel, b, filename='stats.png'
+                                         , content='<https://www.nitrotype.com/racer/%s>' % profile['username'])
 
         gc.collect()
 

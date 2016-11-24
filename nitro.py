@@ -14,6 +14,7 @@ bot.start_time = datetime.utcnow()
 
 @bot.event
 async def on_ready():
+    bot.update_racers = _update_racers
     cogs = ['register', 'stats', 'sudo', 'about', 'racer', 'help', 'garage', 'unregister']
 
     for cog in cogs:
@@ -106,33 +107,42 @@ async def update_racers():
 
     while not bot.is_closed:
         await asyncio.sleep(60*30)
-        users = User.select().execute()
-
-        # Updating users
-        for user in users:
-            server = bot.get_server('223233024127533056')
-            duser = server.get_member(user.id)
-            profile = await get_profile(user.nitro_name)
-
-            # Checking if profile could be found
-            if not profile or not duser:
-                continue
-
-            # Updating discord user
-            print('Updating %s... ' % duser.id, end='')
-
-            try:
-                await bot.cogs['Register'].update_discord_user(duser, bot, profile, server.roles, False)
-                del profile, duser
-            except Exception as e:
-                del profile, duser
-                print(str(e))
-                continue
-
-            print('Done')
-
+        await _update_racers(User.select().execute())
         print('Updated profiles...')
 
+
+async def _update_racers(users):
+
+    # Updating users
+    for user in users:
+        server = bot.get_server('223233024127533056')
+        duser = server.get_member(user.id)
+        profile = await get_profile(user.nitro_name)
+
+        # Checking if profile could be found
+        if not profile or not duser:
+            print("User's profile not found. Unregistering them. %s" % user.id)
+
+            # Unregistering if the user no longer has a Nitro Type account
+            if duser:
+                await bot.cogs['Unregister'].update_discord_user(bot, duser, user)
+
+            # Deleting model as user is no longer in server
+            else:
+                user.delete_instance()
+
+            continue
+
+        # Updating discord user
+        print('Updating %s... ' % duser.id, end='')
+
+        try:
+            await bot.cogs['Register'].update_discord_user(duser, bot, profile, server.roles, False)
+        except Exception as e:
+            print(str(e))
+            continue
+
+        print('Done')
 
 bot.loop.create_task(update_racers())
 bot.run(secret.BOT_TOKEN)

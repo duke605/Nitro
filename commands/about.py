@@ -12,7 +12,7 @@ class About:
 
     @property
     def version(self):
-        return '0.1.0'
+        return '0.1.1'
 
     @commands.command(aliases=['info'], pass_context=True, description='Shows information about this bot.')
     async def about(self, ctx):

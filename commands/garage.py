@@ -97,7 +97,8 @@ class Garage:
             with BytesIO() as b:
                 img.save(b, 'PNG')
                 b.seek(0)
-                await self.bot.send_file(ctx.message.channel, b, filename='garage.png')
+                await self.bot.send_file(ctx.message.channel, b, filename='garage.png'
+                                         , content='<https://www.nitrotype.com/racer/%s>' % profile['username'])
 
 
 def setup(bot):

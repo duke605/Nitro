@@ -23,9 +23,14 @@ class Unregister:
 
         # Removing roles
         roles = [r for r in user.roles
-                 if r.name not in ('Fast-Racers', 'Accurate-Racers', 'Active-Racers', 'Captains', 'Racers')]
+                 if r.name not in ('Fast-Racers', 'Accurate-Racers', 'Active-Racers', 'Captains', 'Racers', 'Gold'
+                                   , 'Veteran', 'Legendary')]
         await bot.replace_roles(user, *roles)
-        await bot.change_nickname(user, None)
+
+        try:
+            await bot.change_nickname(user, None)
+        except Exception:
+            pass
 
 
 def setup(bot):

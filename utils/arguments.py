@@ -8,6 +8,7 @@ class Arguments(argparse.ArgumentParser):
         raise RuntimeError(message)
 
     async def do_parse(self, bot, msg):
+
         try:
             return self.parse_args(shlex.split(msg))
         except SystemExit:

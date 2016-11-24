@@ -1,6 +1,7 @@
 from discord.ext import commands
 from db.models import User
 from utils.nitro_type import get_profile
+from datetime import datetime
 import discord
 
 
@@ -39,9 +40,13 @@ class Register:
         active_role = discord.utils.get(roles, name='Active-Racers')
         captain_role = discord.utils.get(roles, name='Captains')
         std_role = discord.utils.get(roles, name='Racers')
+        gold_role = discord.utils.get(roles, name='Gold')
+        legend_role = discord.utils.get(roles, name='Legendary')
+        vet_role = discord.utils.get(roles, name='Veteran')
+        all_roles = {fast_role, accurate_role, active_role, captain_role, std_role, gold_role, legend_role, vet_role}
 
         # Getting non-racer roles
-        sync_roles = [r for r in user.roles if r not in (fast_role, active_role, accurate_role, captain_role, std_role)]
+        sync_roles = [r for r in user.roles if r not in all_roles]
         sync_roles.append(std_role)
 
         # Checking if the user is a fast typer
@@ -62,6 +67,18 @@ class Register:
         # Checking if user is captain
         if profile['isCaptain']:
             sync_roles.append(captain_role)
+
+        # Checking if user is gold
+        if profile['membership'] == 'gold':
+            sync_roles.append(gold_role)
+
+        # Checking if a player is a vet
+        if datetime.fromtimestamp(profile['createdStamp']) <= datetime(2013, 12, 31):
+            sync_roles.append(vet_role)
+
+        # Checking if user can be a legend of tomorrow
+        if {fast_role, active_role, accurate_role, vet_role, gold_role, std_role, captain_role}.issubset(sync_roles):
+            sync_roles.append(legend_role)
 
         # Making the user's nickname
         nick = profile['displayName'] or profile['username']
