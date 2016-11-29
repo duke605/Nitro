@@ -15,7 +15,7 @@ bot.start_time = datetime.utcnow()
 @bot.event
 async def on_ready():
     bot.update_racers = _update_racers
-    cogs = ['register', 'stats', 'sudo', 'about', 'racer', 'help', 'garage', 'unregister']
+    cogs = ['register', 'stats', 'sudo', 'about', 'racer', 'help', 'garage', 'unregister', 'tasks']
 
     for cog in cogs:
         bot.load_extension('commands.%s' % cog)
@@ -46,21 +46,22 @@ async def on_member_remove(m):
 
 @bot.event
 async def on_command_error(ex, ctx):
+    original = ex.original if hasattr(ex, 'original') else ex
     c = discord.Object(id='249835423415664640')
     e = discord.Embed()
 
     e.description = '[]()'
-    e.title = type(ex).__name__
+    e.title = type(original).__name__
     e.url = 'http://leekspin.com/'
     e.set_author(name=ctx.message.author.display_name, icon_url=ctx.message.author.avatar_url)
     e.timestamp = datetime.now()
 
     e.add_field(name='Input', value=ctx.message.content, inline=False)
-    e.add_field(name='Error', value=str(ex.original), inline=False)
+    e.add_field(name='Error', value=str(original), inline=False)
     e.add_field(name='Channel', value=ctx.message.channel.mention, inline=False)
 
     # Adding information if HTTP error
-    if type(ex.original).__name__ == 'HTTPException':
+    if type(original).__name__ == 'HTTPException':
         e.add_field(name='Response', value=await ex.original.response.text())
 
     await bot.send_message(c, embed=e)

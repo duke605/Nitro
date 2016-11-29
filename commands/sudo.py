@@ -93,7 +93,6 @@ class Sudo:
                   description='Deletes specific message from the channel this command is used in.')
     async def prune(self, ctx, *, msg=''):
         parser = Arguments(allow_abbrev=False, prog='sudo prune')
-        parser.add_argument('-a', '--all', action='store_true', default=False, help='Deletes ALL messages.')
         parser.add_argument('-b', '--bot', action='store_true', default=False, help='Deletes messages from bots.')
         parser.add_argument('-e', '--embeds', action='store_true', default=False, help='Deletes messages with embeds.')
         parser.add_argument('-c', '--contains', nargs='?', default=None, help='Deletes messages containing a phrase.')
@@ -107,8 +106,9 @@ class Sudo:
         if not args:
             return
 
+        _all = not args.bot and not args.embeds and args.contains is None and args.user is None
         deleted_messages = await self.bot.purge_from(ctx.message.channel, limit=args.limit,
-                                                     check=lambda m: args.all
+                                                     check=lambda m: _all
                                                      or (args.bot and m.author.bot)
                                                      or (m.id == ctx.message.id)
                                                      or (args.embeds and (m.embeds or m.attachments))

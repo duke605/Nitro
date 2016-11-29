@@ -12,7 +12,7 @@ class About:
 
     @property
     def version(self):
-        return '0.1.1'
+        return '0.1.2'
 
     @commands.command(aliases=['info'], pass_context=True, description='Shows information about this bot.')
     async def about(self, ctx):
@@ -40,7 +40,7 @@ class About:
                     .format(total_users, reg_users, unreg_users))
 
         e.set_author(name=str(owner), icon_url=owner.avatar_url)
-        e.set_footer(text='Made with discord.py', icon_url='http://i.imgur.com/5BFecvA.png')
+        e.set_footer(text='Made with discord.py (%s)' % discord.__version__, icon_url='http://i.imgur.com/5BFecvA.png')
 
         await self.bot.say(embed=e)
 
